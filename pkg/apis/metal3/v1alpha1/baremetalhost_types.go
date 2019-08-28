@@ -102,6 +102,9 @@ type BMCDetails struct {
 	// The name of the secret containing the BMC credentials (requires
 	// keys "username" and "password").
 	CredentialsName string `json:"credentialsName"`
+
+  // Wether to disable security, such as certificate validation
+	Insecure bool `json:"insecure,omitempty"`
 }
 
 // BareMetalHostSpec defines the desired state of BareMetalHost

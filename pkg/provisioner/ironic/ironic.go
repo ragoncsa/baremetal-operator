@@ -113,7 +113,7 @@ func newProvisioner(host *metal3v1alpha1.BareMetalHost, bmcCreds bmc.Credentials
 	if err != nil {
 		return nil, err
 	}
-	bmcAccess, err := bmc.NewAccessDetails(host.Spec.BMC.Address)
+	bmcAccess, err := bmc.NewAccessDetails(host.Spec.BMC.Address, host.Spec.BMC.Insecure)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to parse BMC address information")
 	}

@@ -14,7 +14,7 @@ func init() {
 
 const redfishDefaultScheme = "https"
 
-func newRedfishAccessDetails(parsedURL *url.URL) (AccessDetails, error) {
+func newRedfishAccessDetails(parsedURL *url.URL, insecure bool) (AccessDetails, error) {
 	// If the hostname is an ipv6 address, it needs to be in square brackets
 	// as we are forming a URL out of it.
 	hostname := parsedURL.Hostname()
@@ -41,6 +41,7 @@ func newRedfishAccessDetails(parsedURL *url.URL) (AccessDetails, error) {
 		bmcType:  parsedURL.Scheme,
 		address:  strings.Join(redfishAddress, ""),
 		path:     parsedURL.Path,
+		insecure: insecure,
 	}, nil
 }
 
@@ -48,6 +49,7 @@ type redfishAccessDetails struct {
 	bmcType  string
 	address  string
 	path     string
+	insecure bool
 }
 
 func (a *redfishAccessDetails) Type() string {
@@ -73,12 +75,19 @@ func (a *redfishAccessDetails) Driver() string {
 // the kernel and ramdisk locations).
 func (a *redfishAccessDetails) DriverInfo(bmcCreds Credentials) map[string]interface{} {
 
+  var insecure string
+	if a.insecure {
+		insecure = "True"
+	} else {
+		insecure = "False"
+	}
 
 	result := map[string]interface{}{
 		"redfish_system_id":     a.path,
 		"redfish_username": bmcCreds.Username,
 		"redfish_password": bmcCreds.Password,
 		"redfish_address": a.address,
+		"redfish_verify_ca": insecure,
 	}
 
 	return result

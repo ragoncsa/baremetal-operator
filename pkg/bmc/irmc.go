@@ -8,7 +8,7 @@ func init() {
 	registerFactory("irmc", newIRMCAccessDetails)
 }
 
-func newIRMCAccessDetails(parsedURL *url.URL) (AccessDetails, error) {
+func newIRMCAccessDetails(parsedURL *url.URL, insecure bool) (AccessDetails, error) {
 	return &iRMCAccessDetails{
 		bmcType:  parsedURL.Scheme,
 		portNum:  parsedURL.Port(),

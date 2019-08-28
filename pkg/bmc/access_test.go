@@ -201,7 +201,7 @@ func TestParseIPMIURLNoSepPort(t *testing.T) {
 }
 
 func TestIPMINeedsMAC(t *testing.T) {
-	acc, err := NewAccessDetails("ipmi://192.168.122.1:6233")
+	acc, err := NewAccessDetails("ipmi://192.168.122.1:6233", false)
 	if err != nil {
 		t.Fatalf("unexpected parse error: %v", err)
 	}
@@ -211,7 +211,7 @@ func TestIPMINeedsMAC(t *testing.T) {
 }
 
 func TestIPMIDriver(t *testing.T) {
-	acc, err := NewAccessDetails("ipmi://192.168.122.1:6233")
+	acc, err := NewAccessDetails("ipmi://192.168.122.1:6233", false)
 	if err != nil {
 		t.Fatalf("unexpected parse error: %v", err)
 	}
@@ -221,7 +221,7 @@ func TestIPMIDriver(t *testing.T) {
 }
 
 func TestIPMIDriverInfoDefaultPort(t *testing.T) {
-	acc, err := NewAccessDetails("ipmi://192.168.122.1")
+	acc, err := NewAccessDetails("ipmi://192.168.122.1", false)
 	if err != nil {
 		t.Fatalf("unexpected parse error: %v", err)
 	}
@@ -232,7 +232,7 @@ func TestIPMIDriverInfoDefaultPort(t *testing.T) {
 }
 
 func TestIPMIBootInterface(t *testing.T) {
-	acc, err := NewAccessDetails("ipmi://192.168.122.1:6233")
+	acc, err := NewAccessDetails("ipmi://192.168.122.1:6233", false)
 	if err != nil {
 		t.Fatalf("unexpected parse error: %v", err)
 	}
@@ -242,7 +242,7 @@ func TestIPMIBootInterface(t *testing.T) {
 }
 
 func TestLibvirtNeedsMAC(t *testing.T) {
-	acc, err := NewAccessDetails("libvirt://192.168.122.1:6233/")
+	acc, err := NewAccessDetails("libvirt://192.168.122.1:6233/", false)
 	if err != nil {
 		t.Fatalf("unexpected parse error: %v", err)
 	}
@@ -252,7 +252,7 @@ func TestLibvirtNeedsMAC(t *testing.T) {
 }
 
 func TestLibvirtDriver(t *testing.T) {
-	acc, err := NewAccessDetails("libvirt://192.168.122.1:6233/")
+	acc, err := NewAccessDetails("libvirt://192.168.122.1:6233/", false)
 	if err != nil {
 		t.Fatalf("unexpected parse error: %v", err)
 	}
@@ -263,7 +263,7 @@ func TestLibvirtDriver(t *testing.T) {
 }
 
 func TestLibvirtBootInterface(t *testing.T) {
-	acc, err := NewAccessDetails("libvirt://192.168.122.1:6233/")
+	acc, err := NewAccessDetails("libvirt://192.168.122.1:6233/", false)
 	if err != nil {
 		t.Fatalf("unexpected parse error: %v", err)
 	}
@@ -361,7 +361,7 @@ func TestParseIDRACURLNoSep(t *testing.T) {
 }
 
 func TestIDRACNeedsMAC(t *testing.T) {
-	acc, err := NewAccessDetails("idrac://192.168.122.1")
+	acc, err := NewAccessDetails("idrac://192.168.122.1", false)
 	if err != nil {
 		t.Fatalf("unexpected parse error: %v", err)
 	}
@@ -371,7 +371,7 @@ func TestIDRACNeedsMAC(t *testing.T) {
 }
 
 func TestIDRACDriver(t *testing.T) {
-	acc, err := NewAccessDetails("idrac://192.168.122.1")
+	acc, err := NewAccessDetails("idrac://192.168.122.1", false)
 	if err != nil {
 		t.Fatalf("unexpected parse error: %v", err)
 	}
@@ -382,7 +382,7 @@ func TestIDRACDriver(t *testing.T) {
 }
 
 func TestIDRACDriverInfo(t *testing.T) {
-	acc, err := NewAccessDetails("idrac://192.168.122.1")
+	acc, err := NewAccessDetails("idrac://192.168.122.1", false)
 	if err != nil {
 		t.Fatalf("unexpected parse error: %v", err)
 	}
@@ -402,7 +402,7 @@ func TestIDRACDriverInfo(t *testing.T) {
 }
 
 func TestIDRACDriverInfoHTTP(t *testing.T) {
-	acc, err := NewAccessDetails("idrac+http://192.168.122.1")
+	acc, err := NewAccessDetails("idrac+http://192.168.122.1", false)
 	if err != nil {
 		t.Fatalf("unexpected parse error: %v", err)
 	}
@@ -422,7 +422,7 @@ func TestIDRACDriverInfoHTTP(t *testing.T) {
 }
 
 func TestIDRACDriverInfoHTTPS(t *testing.T) {
-	acc, err := NewAccessDetails("idrac+https://192.168.122.1")
+	acc, err := NewAccessDetails("idrac+https://192.168.122.1", false)
 	if err != nil {
 		t.Fatalf("unexpected parse error: %v", err)
 	}
@@ -442,7 +442,7 @@ func TestIDRACDriverInfoHTTPS(t *testing.T) {
 }
 
 func TestIDRACDriverInfoPort(t *testing.T) {
-	acc, err := NewAccessDetails("idrac://192.168.122.1:8080/foo")
+	acc, err := NewAccessDetails("idrac://192.168.122.1:8080/foo", false)
 	if err != nil {
 		t.Fatalf("unexpected parse error: %v", err)
 	}
@@ -462,7 +462,7 @@ func TestIDRACDriverInfoPort(t *testing.T) {
 }
 
 func TestIDRACDriverInfoIPv6(t *testing.T) {
-	acc, err := NewAccessDetails("idrac://[fe80::fc33:62ff:fe83:8a76]/foo")
+	acc, err := NewAccessDetails("idrac://[fe80::fc33:62ff:fe83:8a76]/foo", false)
 	if err != nil {
 		t.Fatalf("unexpected parse error: %v", err)
 	}
@@ -482,7 +482,7 @@ func TestIDRACDriverInfoIPv6(t *testing.T) {
 }
 
 func TestIDRACDriverInfoIPv6Port(t *testing.T) {
-	acc, err := NewAccessDetails("idrac://[fe80::fc33:62ff:fe83:8a76]:8080/foo")
+	acc, err := NewAccessDetails("idrac://[fe80::fc33:62ff:fe83:8a76]:8080/foo", false)
 	if err != nil {
 		t.Fatalf("unexpected parse error: %v", err)
 	}
@@ -502,7 +502,7 @@ func TestIDRACDriverInfoIPv6Port(t *testing.T) {
 }
 
 func TestIDRACBootInterface(t *testing.T) {
-	acc, err := NewAccessDetails("idrac://192.168.122.1")
+	acc, err := NewAccessDetails("idrac://192.168.122.1", false)
 	if err != nil {
 		t.Fatalf("unexpected parse error: %v", err)
 	}
@@ -578,7 +578,7 @@ func TestParseIRMCURLNoSep(t *testing.T) {
 }
 
 func TestIRMCNeedsMAC(t *testing.T) {
-	acc, err := NewAccessDetails("irmc://192.168.122.1")
+	acc, err := NewAccessDetails("irmc://192.168.122.1", false)
 	if err != nil {
 		t.Fatalf("unexpected parse error: %v", err)
 	}
@@ -588,7 +588,7 @@ func TestIRMCNeedsMAC(t *testing.T) {
 }
 
 func TestIRMCDriver(t *testing.T) {
-	acc, err := NewAccessDetails("irmc://192.168.122.1")
+	acc, err := NewAccessDetails("irmc://192.168.122.1", false)
 	if err != nil {
 		t.Fatalf("unexpected parse error: %v", err)
 	}
@@ -599,7 +599,7 @@ func TestIRMCDriver(t *testing.T) {
 }
 
 func TestIRMCDriverInfo(t *testing.T) {
-	acc, err := NewAccessDetails("irmc://192.168.122.1")
+	acc, err := NewAccessDetails("irmc://192.168.122.1", false)
 	if err != nil {
 		t.Fatalf("unexpected parse error: %v", err)
 	}
@@ -613,7 +613,7 @@ func TestIRMCDriverInfo(t *testing.T) {
 }
 
 func TestIRMCDriverInfoPort(t *testing.T) {
-	acc, err := NewAccessDetails("irmc://192.168.122.1:8080")
+	acc, err := NewAccessDetails("irmc://192.168.122.1:8080", false)
 	if err != nil {
 		t.Fatalf("unexpected parse error: %v", err)
 	}
@@ -627,7 +627,7 @@ func TestIRMCDriverInfoPort(t *testing.T) {
 }
 
 func TestIRMCDriverInfoIPv6(t *testing.T) {
-	acc, err := NewAccessDetails("irmc://[fe80::fc33:62ff:fe83:8a76]")
+	acc, err := NewAccessDetails("irmc://[fe80::fc33:62ff:fe83:8a76]", false)
 	if err != nil {
 		t.Fatalf("unexpected parse error: %v", err)
 	}
@@ -641,7 +641,7 @@ func TestIRMCDriverInfoIPv6(t *testing.T) {
 }
 
 func TestIRMCDriverInfoIPv6Port(t *testing.T) {
-	acc, err := NewAccessDetails("irmc://[fe80::fc33:62ff:fe83:8a76]:8080")
+	acc, err := NewAccessDetails("irmc://[fe80::fc33:62ff:fe83:8a76]:8080", false)
 	if err != nil {
 		t.Fatalf("unexpected parse error: %v", err)
 	}
@@ -655,7 +655,7 @@ func TestIRMCDriverInfoIPv6Port(t *testing.T) {
 }
 
 func TestIRMCBootInterface(t *testing.T) {
-	acc, err := NewAccessDetails("irmc://192.168.122.1")
+	acc, err := NewAccessDetails("irmc://192.168.122.1", false)
 	if err != nil {
 		t.Fatalf("unexpected parse error: %v", err)
 	}
@@ -765,7 +765,7 @@ func TestParseRedfishURLNoSep(t *testing.T) {
 }
 
 func TestRedfishNeedsMAC(t *testing.T) {
-	acc, err := NewAccessDetails("redfish://192.168.122.1")
+	acc, err := NewAccessDetails("redfish://192.168.122.1", false)
 	if err != nil {
 		t.Fatalf("unexpected parse error: %v", err)
 	}
@@ -775,7 +775,7 @@ func TestRedfishNeedsMAC(t *testing.T) {
 }
 
 func TestRedfishDriver(t *testing.T) {
-	acc, err := NewAccessDetails("redfish://192.168.122.1")
+	acc, err := NewAccessDetails("redfish://192.168.122.1", false)
 	if err != nil {
 		t.Fatalf("unexpected parse error: %v", err)
 	}
@@ -786,7 +786,7 @@ func TestRedfishDriver(t *testing.T) {
 }
 
 func TestRedfishDriverInfo(t *testing.T) {
-	acc, err := NewAccessDetails("redfish://192.168.122.1/foo/bar")
+	acc, err := NewAccessDetails("redfish://192.168.122.1/foo/bar", false)
 	if err != nil {
 		t.Fatalf("unexpected parse error: %v", err)
 	}
@@ -800,7 +800,7 @@ func TestRedfishDriverInfo(t *testing.T) {
 }
 
 func TestRedfishDriverInfoHTTP(t *testing.T) {
-	acc, err := NewAccessDetails("redfish+http://192.168.122.1/foo/bar")
+	acc, err := NewAccessDetails("redfish+http://192.168.122.1/foo/bar", false)
 	if err != nil {
 		t.Fatalf("unexpected parse error: %v", err)
 	}
@@ -814,7 +814,7 @@ func TestRedfishDriverInfoHTTP(t *testing.T) {
 }
 
 func TestRedfishDriverInfoHTTPS(t *testing.T) {
-	acc, err := NewAccessDetails("redfish+https://192.168.122.1/foo/bar")
+	acc, err := NewAccessDetails("redfish+https://192.168.122.1/foo/bar", false)
 	if err != nil {
 		t.Fatalf("unexpected parse error: %v", err)
 	}
@@ -828,7 +828,7 @@ func TestRedfishDriverInfoHTTPS(t *testing.T) {
 }
 
 func TestRedfishDriverInfoPort(t *testing.T) {
-	acc, err := NewAccessDetails("redfish://192.168.122.1:8080/foo/bar")
+	acc, err := NewAccessDetails("redfish://192.168.122.1:8080/foo/bar", false)
 	if err != nil {
 		t.Fatalf("unexpected parse error: %v", err)
 	}
@@ -842,7 +842,7 @@ func TestRedfishDriverInfoPort(t *testing.T) {
 }
 
 func TestRedfishDriverInfoIPv6(t *testing.T) {
-	acc, err := NewAccessDetails("redfish://[fe80::fc33:62ff:fe83:8a76]/foo/bar")
+	acc, err := NewAccessDetails("redfish://[fe80::fc33:62ff:fe83:8a76]/foo/bar", false)
 	if err != nil {
 		t.Fatalf("unexpected parse error: %v", err)
 	}
@@ -853,10 +853,13 @@ func TestRedfishDriverInfoIPv6(t *testing.T) {
 	if di["redfish_system_id"] != "/foo/bar" {
 		t.Fatalf("unexpected system ID: %v", di["redfish_system_id"])
 	}
+	if di["redfish_verify_ca"] != "False" {
+		t.Fatalf("unexpected verify CA: %v", di["redfish_verify_ca"])
+	}
 }
 
 func TestRedfishDriverInfoIPv6Port(t *testing.T) {
-	acc, err := NewAccessDetails("redfish://[fe80::fc33:62ff:fe83:8a76]:8080/foo")
+	acc, err := NewAccessDetails("redfish://[fe80::fc33:62ff:fe83:8a76]:8080/foo", true)
 	if err != nil {
 		t.Fatalf("unexpected parse error: %v", err)
 	}
@@ -867,10 +870,13 @@ func TestRedfishDriverInfoIPv6Port(t *testing.T) {
 	if di["redfish_system_id"] != "/foo" {
 		t.Fatalf("unexpected system ID: %v", di["redfish_system_id"])
 	}
+	if di["redfish_verify_ca"] != "True" {
+		t.Fatalf("unexpected verify CA: %v", di["redfish_verify_ca"])
+	}
 }
 
 func TestRedfishBootInterface(t *testing.T) {
-	acc, err := NewAccessDetails("redfish://192.168.122.1")
+	acc, err := NewAccessDetails("redfish://192.168.122.1", false)
 	if err != nil {
 		t.Fatalf("unexpected parse error: %v", err)
 	}
@@ -881,7 +887,7 @@ func TestRedfishBootInterface(t *testing.T) {
 }
 
 func TestUnknownType(t *testing.T) {
-	acc, err := NewAccessDetails("foo://192.168.122.1")
+	acc, err := NewAccessDetails("foo://192.168.122.1", false)
 	if err == nil || acc != nil {
 		t.Fatal("unexpected parse success")
 	}

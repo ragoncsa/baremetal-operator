@@ -9,7 +9,7 @@ func init() {
 	registerFactory("libvirt", newIPMIAccessDetails)
 }
 
-func newIPMIAccessDetails(parsedURL *url.URL) (AccessDetails, error) {
+func newIPMIAccessDetails(parsedURL *url.URL, insecure bool) (AccessDetails, error) {
 	return &ipmiAccessDetails{
 		bmcType:  parsedURL.Scheme,
 		portNum:  parsedURL.Port(),

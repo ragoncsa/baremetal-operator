@@ -893,7 +893,7 @@ func (r *ReconcileBareMetalHost) buildAndValidateBMCCredentials(request reconcil
 	// more in-depth checking on the url to ensure it is
 	// a valid bmc address, returning a bmc.UnknownBMCTypeError
 	// if it is not conformant
-	_, err = bmc.NewAccessDetails(host.Spec.BMC.Address)
+	_, err = bmc.NewAccessDetails(host.Spec.BMC.Address, host.Spec.BMC.Insecure)
 	if err != nil {
 		return nil, nil, err
 	}

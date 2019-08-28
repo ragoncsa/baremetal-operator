@@ -11,7 +11,7 @@ func init() {
 	registerFactory("idrac+https", newIDRACAccessDetails)
 }
 
-func newIDRACAccessDetails(parsedURL *url.URL) (AccessDetails, error) {
+func newIDRACAccessDetails(parsedURL *url.URL, insecure bool) (AccessDetails, error) {
 	return &iDracAccessDetails{
 		bmcType:  parsedURL.Scheme,
 		portNum:  parsedURL.Port(),
