@@ -143,6 +143,9 @@ type BareMetalHostSpec struct {
 	// data to be passed to the host before it boots.
 	UserData *corev1.SecretReference `json:"userData,omitempty"`
 
+	// MetaData holds the metadata to be passed to the host before it boots.
+	MetaData map[string]string `json:"metadata,omitempty"`	
+
 	// Description is a human-entered text used to help identify the host
 	Description string `json:"description,omitempty"`
 

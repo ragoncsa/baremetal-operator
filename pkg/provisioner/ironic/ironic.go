@@ -803,7 +803,7 @@ func (p *ironicProvisioner) getUpdateOptsForNode(ironicNode *nodes.Node, checksu
 	return updates, nil
 }
 
-func (p *ironicProvisioner) startProvisioning(ironicNode *nodes.Node, checksum string, getUserData provisioner.UserDataSource) (result provisioner.Result, err error) {
+func (p *ironicProvisioner) startProvisioning(ironicNode *nodes.Node, checksum string) (result provisioner.Result, err error) {
 
 	p.log.Info("starting provisioning")
 
@@ -899,6 +899,20 @@ func (p *ironicProvisioner) Adopt() (result provisioner.Result, err error) {
 	return
 }
 
+// getMetaData fetches the user-provided metadata and adds / overrides the uuid
+func (p *ironicProvisioner) getMetaData() (map[string]interface{}, error) {
+	metaData := make(map[string]interface{})
+	if p.host.Spec.MetaData == nil {
+		p.log.Info("no meta data for host")
+	} else {
+		for key, value := range p.host.Spec.MetaData {
+			metaData[key] = value
+		}
+	}
+	metaData["uuid"] = p.host.Status.Provisioning.ID
+	return metaData, nil
+}
+
 // Provision writes the image from the host spec to the host. It may
 // be called multiple times, and should return true for its dirty flag
 // until the deprovisioning operation is completed.
@@ -952,10 +966,10 @@ func (p *ironicProvisioner) Provision(getUserData provisioner.UserDataSource) (r
 			return result, nil
 		}
 		p.log.Info("recovering from previous failure")
-		return p.startProvisioning(ironicNode, checksum, getUserData)
+		return p.startProvisioning(ironicNode, checksum)
 
 	case nodes.Manageable:
-		return p.startProvisioning(ironicNode, checksum, getUserData)
+		return p.startProvisioning(ironicNode, checksum)
 
 	case nodes.Available:
 		// After it is available, we need to start provisioning by
@@ -967,6 +981,11 @@ func (p *ironicProvisioner) Provision(getUserData provisioner.UserDataSource) (r
 			return result, errors.Wrap(err, "could not retrieve user data")
 		}
 
+		metaData, err := getMetaData()
+		if err != nil {
+			return result, errors.Wrap(err, "could not retrieve meta data")
+		}
+
 		var configDrive nodes.ConfigDrive
 		if userData != "" {
 			configDrive = nodes.ConfigDrive{
@@ -974,10 +993,7 @@ func (p *ironicProvisioner) Provision(getUserData provisioner.UserDataSource) (r
 				// cloud-init requires that meta_data.json exists and
 				// that the "uuid" field is present to process
 				// any of the config drive contents.
-				MetaData: map[string]interface{}{
-					"uuid":             string(p.host.ObjectMeta.UID),
-					"metal3-namespace": p.host.ObjectMeta.Namespace,
-					"metal3-name":      p.host.ObjectMeta.Name,
+				MetaData: metaData,
 				},
 			}
 			if err != nil {
