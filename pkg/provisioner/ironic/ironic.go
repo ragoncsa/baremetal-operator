@@ -291,10 +291,13 @@ func (p *ironicProvisioner) ValidateManagementAccess(credentialsChanged bool) (r
 					Path:  "/instance_info/image_checksum",
 					Value: checksum,
 				},
+				// NOTE(dhellmann): We must fill in *some* value so that
+				// Ironic will monitor the host. We don't have a nova
+				// instance at all, so just give the node it's UUID again.
 				nodes.UpdateOperation{
 					Op:    nodes.ReplaceOp,
 					Path:  "/instance_uuid",
-					Value: string(p.host.ObjectMeta.UID),
+					Value: p.host.Status.Provisioning.ID,
 				},
 			}
 			_, err = nodes.Update(p.client, ironicNode.UUID, updates).Extract()
@@ -702,13 +705,17 @@ func (p *ironicProvisioner) getUpdateOptsForNode(ironicNode *nodes.Node, checksu
 	)
 
 	// instance_uuid
+	//
+	// NOTE(dhellmann): We must fill in *some* value so that Ironic
+	// will monitor the host. We don't have a nova instance at all, so
+	// just give the node it's UUID again.
 	p.log.Info("setting instance_uuid")
 	updates = append(
 		updates,
 		nodes.UpdateOperation{
 			Op:    nodes.ReplaceOp,
 			Path:  "/instance_uuid",
-			Value: string(p.host.ObjectMeta.UID),
+			Value: p.host.Status.Provisioning.ID,
 		},
 	)
 
@@ -980,8 +987,7 @@ func (p *ironicProvisioner) Provision(getUserData provisioner.UserDataSource) (r
 		if err != nil {
 			return result, errors.Wrap(err, "could not retrieve user data")
 		}
-
-		metaData, err := getMetaData()
+		metaData, err := p.getMetaData()
 		if err != nil {
 			return result, errors.Wrap(err, "could not retrieve meta data")
 		}
@@ -994,7 +1000,6 @@ func (p *ironicProvisioner) Provision(getUserData provisioner.UserDataSource) (r
 				// that the "uuid" field is present to process
 				// any of the config drive contents.
 				MetaData: metaData,
-				},
 			}
 			if err != nil {
 				return result, errors.Wrap(err, "failed to build config drive")

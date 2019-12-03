@@ -149,6 +149,12 @@ spec:
               - checksum
               - url
               type: object
+            metadata:
+              additionalProperties:
+                type: string
+              description: MetaData holds the metadata to be passed to the host before
+                it boots.
+              type: object
             online:
               description: Should the server be online?
               type: boolean

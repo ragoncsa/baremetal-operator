@@ -128,6 +128,13 @@ func (in *BareMetalHostSpec) DeepCopyInto(out *BareMetalHostSpec) {
 		*out = new(v1.SecretReference)
 		**out = **in
 	}
+	if in.MetaData != nil {
+		in, out := &in.MetaData, &out.MetaData
+		*out = make(map[string]string, len(*in))
+		for key, val := range *in {
+			(*out)[key] = val
+		}
+	}
 	return
 }
 
