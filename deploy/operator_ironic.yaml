@@ -15,6 +15,11 @@ spec:
       serviceAccountName: metal3-baremetal-operator
       hostNetwork: true
       containers:
+        - name: ironic-endpoint-keepalived
+          image: kashifest/ironic-endpoint-keepalived:v5
+          securityContext:
+             capabilities:
+               add: ["NET_ADMIN"]
         - name: baremetal-operator
           image: quay.io/metal3-io/baremetal-operator
           ports:
