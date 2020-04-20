@@ -1,0 +1,14 @@
+# This file is for teaching kustomize how to substitute name and namespace reference in CRD
+nameReference:
+- kind: ServiceAccount
+  version: v1
+  fieldSpecs:
+  - path: subjects/name
+    group: rbac.authorization.k8s.io
+    kind: ClusterRoleBinding
+       
+namespace:
+- kind: ClusterRoleBinding
+  group: rbac.authorization.k8s.io
+  path: subjects/namespace
+  create: false

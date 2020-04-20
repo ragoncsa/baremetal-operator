@@ -12,7 +12,7 @@ spec:
       labels:
         name: metal3-baremetal-operator
     spec:
-      serviceAccountName: metal3-baremetal-operator
+      serviceAccountName: capm3-metal3-baremetal-operator
       containers:
         - name: baremetal-operator
           image: quay.io/metal3-io/baremetal-operator:master

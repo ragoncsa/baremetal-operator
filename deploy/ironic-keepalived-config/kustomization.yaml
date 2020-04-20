@@ -3,8 +3,6 @@ kind: Kustomization
 namespace: metal3
 resources:
 - ../namespace
-- ../rbac
-- ../crds
 - ../operator/ironic_keepalived
 configMapGenerator:
 - envs:

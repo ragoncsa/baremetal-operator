@@ -12,7 +12,6 @@ spec:
       labels:
         name: metal3-baremetal-operator
     spec:
-      serviceAccountName: metal3-baremetal-operator
       hostNetwork: true
       containers:
         - name: ironic-endpoint-keepalived

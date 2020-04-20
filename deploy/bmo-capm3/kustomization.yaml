@@ -9,3 +9,23 @@ configMapGenerator:
 - envs:
   - ironic_bmo_configmap.env
   name: ironic-bmo-configmap
+
+# the following config is for teaching kustomize how to do kustomization for rbac.
+configurations:
+- kustomizeconfig.yaml
+
+# vars:
+# - name: SERVICE_ACCOUNT_NAMESPACE 
+#   objref:
+#     apiVersion: v1
+#     kind: ServiceAccount
+#     name: capm3-metal3-baremetal-operator
+#   fieldref:
+#     fieldpath: subjects.namespace
+# - name: SERVICE_ACCOUNT_NAME
+#   objref:
+#     apiVersion: v1
+#     kind: ServiceAccount
+#     name: capm3-metal3-baremetal-operator
+#   fieldref:
+#     fieldpath: subjects.name
