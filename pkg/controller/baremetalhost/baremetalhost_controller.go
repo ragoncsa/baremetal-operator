@@ -44,6 +44,7 @@ const (
 	hostErrorRetryDelay    = time.Second * 10
 	pauseRetryDelay        = time.Second * 30
 	rebootAnnotationPrefix = "reboot.metal3.io"
+	rebootAnnotation       = "inspect.metal3.io"
 )
 
 var runInTestMode bool
@@ -410,6 +411,17 @@ func hasRebootAnnotation(host *metal3v1alpha1.BareMetalHost) bool {
 	return false
 }
 
+// hasInspectAnnotation checks for existence of inspect annotations and returns true if it exist
+func hasInspectAnnotation(host *metal3v1alpha1.BareMetalHost) bool {
+	annotations := host.GetAnnotations()
+	if annotations != nil {
+		if _, ok := annotations[metal3v1alpha1.InspectAnnotation]; ok {
+			return true
+		}
+	}
+	return false
+}
+
 // isRebootAnnotation returns true if the provided annotation is a reboot annotation (either suffixed or not)
 func isRebootAnnotation(annotation string) bool {
 	return strings.HasPrefix(annotation, rebootAnnotationPrefix+"/") || annotation == rebootAnnotationPrefix
@@ -424,6 +436,13 @@ func clearRebootAnnotations(host *metal3v1alpha1.BareMetalHost) (dirty bool) {
 		}
 	}
 
+	return
+}
+
+// clearInspectAnnotations deletes inspect annotation exist on the provided host
+func clearInspectAnnotations(host *metal3v1alpha1.BareMetalHost) (dirty bool) {
+	delete(host.Annotations, metal3v1alpha1.InspectAnnotation)
+	dirty = true
 	return
 }
 
@@ -512,6 +531,15 @@ func (r *ReconcileBareMetalHost) actionRegistering(prov provisioner.Provisioner,
 func (r *ReconcileBareMetalHost) actionInspecting(prov provisioner.Provisioner, info *reconcileInfo) actionResult {
 	info.log.Info("inspecting hardware")
 
+	// delete inspect annotation if it exists
+	if hasInspectAnnotation(info.host) {
+		if clearInspectAnnotations(info.host) {
+			if err := r.client.Update(context.TODO(), info.host); err != nil {
+				return actionError{errors.Wrap(err, "failed to remove inspect annotation from host")}
+			}
+		}
+	}
+
 	provResult, details, err := prov.InspectHardware()
 	if err != nil {
 		return actionError{errors.Wrap(err, "hardware inspection failed")}
@@ -531,6 +559,7 @@ func (r *ReconcileBareMetalHost) actionInspecting(prov provisioner.Provisioner, 
 		return actionContinue{provResult.RequeueAfter}
 	}
 
+// add annotation deletion here, but first check if annotation exist
 	return actionFailed{}
 }
 
@@ -792,7 +821,9 @@ func (r *ReconcileBareMetalHost) actionManageReady(prov provisioner.Provisioner,
 		info.host.ClearError()
 		return actionContinue{provResult.RequeueAfter}
 	}
-
+	if hasInspectAnnotation(info.host) {
+		return r.actionInspecting(prov, info)
+	}
 	if info.host.NeedsProvisioning() {
 		// Ensure the root device hints we're going to use are stored.
 		dirty, err := saveHostProvisioningSettings(info.host)
