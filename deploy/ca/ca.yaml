@@ -1,0 +1,53 @@
+apiVersion: cert-manager.io/v1alpha2
+kind: Issuer
+metadata:
+  name: ironic-selfsigned-ca
+  namespace: capm3-system
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: ironic-ca-keypair
+  namespace: capm3-system
+spec:
+  # Secret names are always required.
+  secretName: ironic-ca-keypair
+  duration: 2160h # 90d
+  renewBefore: 360h # 15d
+  organization:
+  - metal3.io
+  # The use of the common name field has been deprecated since 2000 and is
+  # discouraged from being used.
+  commonName: ironic-ca
+  isCA: true
+  keySize: 4096
+  keyAlgorithm: rsa
+  keyEncoding: pkcs1
+  usages:
+    - server auth
+    - client auth
+  # At least one of a DNS Name, URI, or IP address is required.
+  dnsNames:
+  - ironic-ca.metal3.io
+  ipAddresses:
+  - 192.168.0.5
+  # Issuer references are always required.
+  issuerRef:
+    name: ironic-selfsigned-ca
+    # We can reference ClusterIssuers by changing the kind here.
+    # The default value is Issuer (i.e. a locally namespaced Issuer)
+    kind: Issuer
+    # This is optional since cert-manager will default to this value however
+    # if you are using an external issuer, change this to that issuer group.
+    group: cert-manager.io
+---
+apiVersion: cert-manager.io/v1alpha2
+kind: Issuer
+metadata:
+  name: ironic-ca
+  namespace: capm3-system
+spec:
+  ca:
+    secretName: ironic-ca-keypair

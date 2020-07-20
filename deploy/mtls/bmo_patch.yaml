@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metal3-baremetal-operator
+spec:
+  template:
+    spec:
+      volumes:
+        - name: client-cert-files
+          secret:
+            secretName: bmo-ironic-client-keypair
+            items:
+            - key: tls.crt
+              path: client.crt
+            - key: tls.key
+              path: client.key
+      containers:
+        - name: baremetal-operator
+          volumeMounts:
+            - name: client-cert-files
+              mountPath: "/pki/client"
+              readOnly: true

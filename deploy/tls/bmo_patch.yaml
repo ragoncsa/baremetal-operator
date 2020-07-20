@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metal3-baremetal-operator
+spec:
+  template:
+    spec:
+      volumes:
+        - name: ca-files
+          secret:
+            secretName: ironic-ca-keypair
+            items:
+            - key: tls.crt
+              path: ca.crt
+      containers:
+        - name: baremetal-operator
+          volumeMounts:
+            - name: ca-files
+              mountPath: "/pki/ca"
+              readOnly: true
