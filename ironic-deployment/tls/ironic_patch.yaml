@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metal3-ironic
+spec:
+  template:
+    spec:
+      volumes:
+        - name: server-cert-files
+          secret:
+            secretName: ironic-server-keypair
+            items:
+            - key: tls.crt
+              path: server.crt
+            - key: tls.key
+              path: server.key
+      containers:
+        - name: ironic
+          volumeMounts:
+            - name: server-cert-files
+              mountPath: "/pki/server"
+              readOnly: true
+        - name: ironic-inspector
+          volumeMounts:
+            - name: server-cert-files
+              mountPath: "/pki/server"
+              readOnly: true
