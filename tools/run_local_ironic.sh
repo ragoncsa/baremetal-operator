@@ -158,7 +158,7 @@ sudo "${CONTAINER_RUNTIME}" run -d --net host --privileged --name httpd \
 # shellcheck disable=SC2086
 sudo "${CONTAINER_RUNTIME}" run -d --net host --privileged --name mariadb \
      ${POD} --env-file "${IRONIC_DATA_DIR}/ironic-vars.env" \
-     -v "$IRONIC_DATA_DIR:/shared" --entrypoint sleep infinity \
+     -v "$IRONIC_DATA_DIR:/shared" --entrypoint "sleep infinity" \
      # -v "$IRONIC_DATA_DIR:/shared" --entrypoint /bin/runmariadb \
      --env "MARIADB_PASSWORD=$mariadb_password" "${IRONIC_IMAGE}"
 
@@ -169,7 +169,7 @@ sudo "${CONTAINER_RUNTIME}" run -d --net host --privileged --name ironic-api \
      ${POD} ${CERTS_MOUNTS} ${BASIC_AUTH_MOUNTS} ${IRONIC_HTPASSWD} \
      --env-file "${IRONIC_DATA_DIR}/ironic-vars.env" \
      --env "MARIADB_PASSWORD=$mariadb_password" \
-     --entrypoint sleep infinity \
+     --entrypoint "sleep infinity" \
      # --entrypoint /bin/runironic-api \
      -v "$IRONIC_DATA_DIR:/shared" "${IRONIC_IMAGE}"
 
@@ -181,7 +181,7 @@ sudo "${CONTAINER_RUNTIME}" run -d --net host --privileged --name ironic-conduct
      --env-file "${IRONIC_DATA_DIR}/ironic-vars.env" \
      --env "MARIADB_PASSWORD=$mariadb_password" \
      # --entrypoint /bin/runironic-conductor \
-     --entrypoint sleep infinity \
+     --entrypoint "sleep infinity" \
      -v "$IRONIC_DATA_DIR:/shared" "${IRONIC_IMAGE}"
 
 # Start ironic-endpoint-keepalived
