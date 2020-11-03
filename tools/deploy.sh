@@ -174,6 +174,7 @@ if [ "${DEPLOY_TLS}" == "true" ]; then
         openssl x509 -req -in /tmp/mariadb.csr -CA "${MARIADB_CACERT_FILE}" -CAkey "${MARIADB_CAKEY_FILE}" -CAcreateserial -out "${MARIADB_CERT_FILE}" -days 825 -sha256 -extfile <(printf "subjectAltName=IP:%s" "${MARIADB_HOST_IP}")
     fi
 
+
     if [ "${DEPLOY_BMO}" == "true" ]; then
         cp "${IRONIC_CACERT_FILE}" "${SCRIPTDIR}/config/tls/ca.crt"
         [ "${IRONIC_CACERT_FILE}" == "${IRONIC_INSPECTOR_CACERT_FILE}" ] || \
@@ -186,6 +187,9 @@ if [ "${DEPLOY_TLS}" == "true" ]; then
         else
             IRONIC_TLS_SCENARIO="${SCRIPTDIR}/ironic-deployment/tls/default"
         fi
+        # Ensure that the MariaDB key file allow a non-owned user to read.
+        chmod 604 ${MARIADB_KEY_FILE}
+
         cp "${IRONIC_CACERT_FILE}" "${IRONIC_TLS_SCENARIO}/ironic-ca.crt"
         cp "${IRONIC_INSPECTOR_CACERT_FILE}" "${IRONIC_TLS_SCENARIO}/ironic-inspector-ca.crt"
         cp "${MARIADB_CACERT_FILE}" "${IRONIC_TLS_SCENARIO}/mariadb-ca.crt"

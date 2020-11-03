@@ -25,9 +25,12 @@ IRONIC_INSPECTOR_CACERT_FILE="${IRONIC_INSPECTOR_CACERT_FILE:-}"
 IRONIC_INSPECTOR_CERT_FILE="${IRONIC_INSPECTOR_CERT_FILE:-}"
 IRONIC_INSPECTOR_KEY_FILE="${IRONIC_INSPECTOR_KEY_FILE:-}"
 
-MARIADB_CACERT_FILE="${MARIADB_CACERT_FILE:-}"
 MARIADB_CERT_FILE="${MARIADB_CERT_FILE:-}"
 MARIADB_KEY_FILE="${MARIADB_KEY_FILE:-}"
+
+# Ensure that the MariaDB key file allow a non-owned user to read.
+chmod 604 ${MARIADB_KEY_FILE}
+
 
 if [ -n "$IRONIC_CERT_FILE" ]; then
     export IRONIC_BASE_URL="https://${CLUSTER_PROVISIONING_IP}"
@@ -67,9 +70,11 @@ sudo "${CONTAINER_RUNTIME}" pull "$IRONIC_INSPECTOR_IMAGE"
 sudo "${CONTAINER_RUNTIME}" pull "$IRONIC_KEEPALIVED_IMAGE"
 
 CERTS_MOUNTS=""
+
 if [ -n "$IRONIC_CACERT_FILE" ]; then
-     CERTS_MOUNTS="-v ${IRONIC_CACERT_FILE}:/certs/ca/ironic/tls.crt "
+      CERTS_MOUNTS="-v ${IRONIC_CACERT_FILE}:/certs/ca/ironic/tls.crt "
 fi
+
 if [ -n "$IRONIC_CERT_FILE" ]; then
      CERTS_MOUNTS="${CERTS_MOUNTS} -v ${IRONIC_CERT_FILE}:/certs/ironic/tls.crt "
 fi
@@ -86,9 +91,9 @@ if [ -n "$IRONIC_INSPECTOR_KEY_FILE" ]; then
      CERTS_MOUNTS="${CERTS_MOUNTS} -v ${IRONIC_INSPECTOR_KEY_FILE}:/certs/ironic-inspector/tls.key "
 fi
 
-if [ -n "$MARIADB_CACERT_FILE" ]; then
-     CERTS_MOUNTS="${CERTS_MOUNTS} -v ${MARIADB_CACERT_FILE}:/certs/ca/mariadb/tls.crt "
-fi
+# if [ -n "$MARIADB_CACERT_FILE" ]; then
+#      CERTS_MOUNTS="${CERTS_MOUNTS} -v ${MARIADB_CACERT_FILE}:/certs/ca/mariadb/tls.crt "
+# fi
 if [ -n "$MARIADB_CERT_FILE" ]; then
      CERTS_MOUNTS="${CERTS_MOUNTS} -v ${MARIADB_CERT_FILE}:/certs/mariadb/tls.crt "
 fi
