@@ -44,6 +44,9 @@ const (
 	// annotation is present and status is empty, BMO will reconstruct BMH Status
 	// from the status annotation.
 	StatusAnnotation = "baremetalhost.metal3.io/status"
+
+	// InspectAnnotation is the annotation that request inspection
+	InspectAnnotation = "inspect.metal3.io"
 )
 
 // RootDeviceHints holds the hints for specifying the storage location
@@ -741,6 +744,17 @@ func (host *BareMetalHost) NeedsHardwareInspection() bool {
 		return false
 	}
 	return host.Status.HardwareDetails == nil
+}
+
+// HasInspectAnnotation checks for existence of inspect annotation and returns true if exist
+func (host *BareMetalHost) HasInspectAnnotation() bool {
+	annotations := host.GetAnnotations()
+	if annotations != nil {
+		if _, ok := annotations[InspectAnnotation]; ok {
+			return true
+		}
+	}
+	return false
 }
 
 // NeedsProvisioning compares the settings with the provisioning

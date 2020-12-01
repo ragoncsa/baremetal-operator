@@ -54,6 +54,11 @@ func (r actionContinue) Dirty() bool {
 
 // actionComplete is a result indicating that the current action has completed,
 // and that the resource should transition to the next state.
+type actionInspect struct {
+}
+
+// actionComplete is a result indicating that the current action has completed,
+// and that the resource should transition to the next state.
 type actionComplete struct {
 }
 

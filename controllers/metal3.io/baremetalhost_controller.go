@@ -50,6 +50,7 @@ const (
 	unmanagedRetryDelay           = time.Minute * 10
 	provisionerNotReadyRetryDelay = time.Second * 30
 	rebootAnnotationPrefix        = "reboot.metal3.io"
+	// inspectAnnotation             = "inspect.metal3.io"
 )
 
 func init() {
@@ -354,6 +355,22 @@ func clearRebootAnnotations(host *metal3v1alpha1.BareMetalHost) (dirty bool) {
 	return
 }
 
+// clearInspectAnnotation deletes inspect annotation exist on the provided host
+func clearInspectAnnotation(host *metal3v1alpha1.BareMetalHost) {
+	delete(host.Annotations, metal3v1alpha1.InspectAnnotation)
+}
+
+// HasInspectAnnotation checks for existence of inspect annotation and returns true if exist
+func HasInspectAnnotation(host *metal3v1alpha1.BareMetalHost) bool {
+	annotations := host.GetAnnotations()
+	if annotations != nil {
+		if _, ok := annotations[metal3v1alpha1.InspectAnnotation]; ok {
+			return true
+		}
+	}
+	return false
+}
+
 // Manage deletion of the host
 func (r *BareMetalHostReconciler) actionDeleting(prov provisioner.Provisioner, info *reconcileInfo) actionResult {
 	info.log.Info(
@@ -459,6 +476,14 @@ func (r *BareMetalHostReconciler) actionInspecting(prov provisioner.Provisioner,
 
 	if provResult.Dirty || details == nil {
 		return actionContinue{provResult.RequeueAfter}
+	}
+
+	// Delete inspect annotation if exists
+	if HasInspectAnnotation(info.host) {
+		clearInspectAnnotation(info.host)
+		if err := r.Update(context.TODO(), info.host); err != nil {
+			return actionError{errors.Wrap(err, "failed to remove inspect annotations from host")}
+		}
 	}
 
 	info.host.Status.HardwareDetails = details

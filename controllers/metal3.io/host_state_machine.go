@@ -271,12 +271,19 @@ func (hsm *hostStateMachine) handleReady(info *reconcileInfo) actionResult {
 		return actionComplete{}
 	}
 
+	if hsm.Host.HasInspectAnnotation() {
+		hsm.NextState = metal3v1alpha1.StateInspecting
+	}
 	actResult := hsm.Reconciler.actionManageReady(hsm.Provisioner, info)
 
 	if _, complete := actResult.(actionComplete); complete {
 		hsm.NextState = metal3v1alpha1.StateProvisioning
 	}
 	return actResult
+	// if _, complete := actResult.(actionComplete); complete {
+	// 	hsm.NextState = metal3v1alpha1.StateProvisioning
+	// }
+
 }
 
 func (hsm *hostStateMachine) provisioningCancelled() bool {
