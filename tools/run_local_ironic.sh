@@ -25,7 +25,6 @@ IRONIC_INSPECTOR_CACERT_FILE="${IRONIC_INSPECTOR_CACERT_FILE:-}"
 IRONIC_INSPECTOR_CERT_FILE="${IRONIC_INSPECTOR_CERT_FILE:-}"
 IRONIC_INSPECTOR_KEY_FILE="${IRONIC_INSPECTOR_KEY_FILE:-}"
 INSPECTOR_REVERSE_PROXY_SETUP="${INSPECTOR_REVERSE_PROXY_SETUP:-"true"}"
-IRONIC_API_BEHIND_WSGI=${IRONIC_API_BEHIND_WSGI:-"true"}
 
 MARIADB_CACERT_FILE="${MARIADB_CACERT_FILE:-}"
 MARIADB_CERT_FILE="${MARIADB_CERT_FILE:-}"
@@ -69,7 +68,6 @@ CACHEURL=${CACHEURL}
 IRONIC_FAST_TRACK=${IRONIC_FAST_TRACK}
 IRONIC_KERNEL_PARAMS=${IRONIC_KERNEL_PARAMS}
 INSPECTOR_REVERSE_PROXY_SETUP=${INSPECTOR_REVERSE_PROXY_SETUP}
-IRONIC_API_BEHIND_WSGI=${IRONIC_API_BEHIND_WSGI}
 EOF
 
 sudo "${CONTAINER_RUNTIME}" pull "$IRONIC_IMAGE"
@@ -169,13 +167,6 @@ sudo "${CONTAINER_RUNTIME}" wait ipa-downloader
 sudo "${CONTAINER_RUNTIME}" run -d --net host --privileged --name dnsmasq \
      ${POD} --env-file "${IRONIC_DATA_DIR}/ironic-vars.env" \
      -v "$IRONIC_DATA_DIR:/shared" --entrypoint /bin/rundnsmasq "${IRONIC_IMAGE}"
-
-# For available env vars, see:
-# https://github.com/metal3-io/ironic/blob/master/runhttpd.sh
-# shellcheck disable=SC2086
-sudo "${CONTAINER_RUNTIME}" run -d --net host --privileged --name httpd \
-     ${POD} --env-file "${IRONIC_DATA_DIR}/ironic-vars.env" \
-     -v "$IRONIC_DATA_DIR:/shared" --entrypoint /bin/runhttpd "${IRONIC_IMAGE}"
 
 # https://github.com/metal3-io/ironic/blob/master/runmariadb.sh
 # shellcheck disable=SC2086
