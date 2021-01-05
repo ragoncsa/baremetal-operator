@@ -273,6 +273,10 @@ type BareMetalHostSpec struct {
 	// the power status and hardware inventory inspection. If the
 	// Image field is filled in, this field is ignored.
 	ExternallyProvisioned bool `json:"externallyProvisioned,omitempty"`
+
+	// DisableAutomatedClean indicates whether disk cleaning should be enabled/disabled
+	// for a node during provisioning & deprovisioning.
+	DisableAutomatedClean bool `json:"disableAutomatedClean,omitempty"`
 }
 
 // ChecksumType holds the algorithm name for the checksum
@@ -556,6 +560,10 @@ type BareMetalHostStatus struct {
 	// ErrorCount records how many times the host has encoutered an error since the last successful operation
 	// +kubebuilder:default:=0
 	ErrorCount int `json:"errorCount"`
+
+	// DisableAutomatedClean indicates whether disk cleaning is enabled/disabled
+	// for a node.
+	DisableAutomatedClean bool `json:"disableAutomatedClean"`
 }
 
 // ProvisionStatus holds the state information for a single target.
