@@ -121,6 +121,10 @@ spec:
               description:
                 description: Description is a human-entered text used to help identify the host
                 type: string
+              disableAutomatedClean:
+                default: false
+                description: DisableAutomatedClean indicates whether disk cleaning should be enabled/disabled for a node.
+                type: boolean
               externallyProvisioned:
                 description: ExternallyProvisioned means something else is managing the image running on the host and the operator should only manage the power status and hardware inventory inspection. If the Image field is filled in, this field is ignored.
                 type: boolean
@@ -252,6 +256,9 @@ spec:
           status:
             description: BareMetalHostStatus defines the observed state of BareMetalHost
             properties:
+              disableAutomatedClean:
+                description: DisableAutomatedClean indicates whether disk cleaning is enabled/disabled for a node.
+                type: boolean
               errorCount:
                 default: 0
                 description: ErrorCount records how many times the host has encoutered an error since the last successful operation
@@ -627,6 +634,7 @@ spec:
                     type: string
                 type: object
             required:
+            - disableAutomatedClean
             - errorCount
             - errorMessage
             - hardwareProfile
