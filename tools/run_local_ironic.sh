@@ -209,9 +209,9 @@ sudo "${CONTAINER_RUNTIME}" run -d --net host --privileged --name ironic-endpoin
 
 # Start ironic-log-watch
 # shellcheck disable=SC2086
-sudo "${CONTAINER_RUNTIME}" run -d --net host --privileged --name ironic-log-watch \
-    ${POD} --entrypoint /bin/runlogwatch.sh \
-     -v "$IRONIC_DATA_DIR:/shared" "${IRONIC_IMAGE}"
+# sudo "${CONTAINER_RUNTIME}" run -d --net host --privileged --name ironic-log-watch \
+#     ${POD} --entrypoint /bin/runlogwatch.sh \
+#      -v "$IRONIC_DATA_DIR:/shared" "${IRONIC_IMAGE}"
 
 # Start Ironic Inspector
 # shellcheck disable=SC2086
@@ -233,6 +233,6 @@ fi
 
 # Start ironic-inspector-log-watch
 # shellcheck disable=SC2086
-sudo "${CONTAINER_RUNTIME}" run -d --net host --privileged --name ironic-inspector-log-watch \
-    ${POD} --entrypoint /bin/runlogwatch.sh \
-     -v "$IRONIC_DATA_DIR:/shared" "${IRONIC_INSPECTOR_IMAGE}"
+# sudo "${CONTAINER_RUNTIME}" run -d --net host --privileged --name ironic-inspector-log-watch \
+#     ${POD} --entrypoint /bin/runlogwatch.sh \
+#      -v "$IRONIC_DATA_DIR:/shared" "${IRONIC_INSPECTOR_IMAGE}"
