@@ -51,6 +51,7 @@ const (
 	unmanagedRetryDelay           = time.Minute * 10
 	provisionerNotReadyRetryDelay = time.Second * 30
 	rebootAnnotationPrefix        = "reboot.metal3.io"
+	inspectAnnotation             = "inspect.metal3.io"
 )
 
 // BareMetalHostReconciler reconciles a BareMetalHost object
@@ -364,6 +365,13 @@ func clearRebootAnnotations(host *metal3v1alpha1.BareMetalHost) (dirty bool) {
 	return
 }
 
+// clearInspectAnnotation deletes inspect annotation exist on the provided host
+func clearInspectAnnotation(host *metal3v1alpha1.BareMetalHost) (dirty bool) {
+	delete(host.Annotations, inspectAnnotation)
+	dirty = true
+	return
+}
+
 // clearError removes any existing error message.
 func clearError(host *metal3v1alpha1.BareMetalHost) (dirty bool) {
 	dirty = host.SetOperationalStatus(metal3v1alpha1.OperationalStatusOK)
@@ -497,6 +505,17 @@ func (r *BareMetalHostReconciler) registerHost(prov provisioner.Provisioner, inf
 	return nil
 }
 
+// hasInspectAnnotation checks for existence of inspect annotation and returns true if it exist+
+func hasInspectAnnotation(host *metal3v1alpha1.BareMetalHost) bool {
+	annotations := host.GetAnnotations()
+	if annotations != nil {
+		if _, ok := annotations[inspectAnnotation]; ok {
+			return true
+		}
+	}
+	return false
+}
+
 // Ensure we have the information about the hardware on the host.
 func (r *BareMetalHostReconciler) actionInspecting(prov provisioner.Provisioner, info *reconcileInfo) actionResult {
 	info.log.Info("inspecting hardware")
@@ -520,6 +539,16 @@ func (r *BareMetalHostReconciler) actionInspecting(prov provisioner.Provisioner,
 
 	clearError(info.host)
 	info.host.Status.HardwareDetails = details
+	// return actionComplete{}
+
+	// Delete inspect annotation if exists
+	if hasInspectAnnotation(info.host) {
+		if clearInspectAnnotation(info.host) {
+			if err := r.Update(context.TODO(), info.host); err != nil {
+				return actionError{errors.Wrap(err, "failed to remove inspect annotations from host")}
+			}
+		}
+	}
 	return actionComplete{}
 }
 
@@ -659,6 +688,13 @@ func (r *BareMetalHostReconciler) actionProvisioning(prov provisioner.Provisione
 func clearHostProvisioningSettings(host *metal3v1alpha1.BareMetalHost) {
 	host.Status.Provisioning.RootDeviceHints = nil
 }
+
+// clearHostProvisioningSettings removes the values related to
+// provisioning that do not trigger re-provisioning from the status
+// fields of a host.
+// func clearHostInspectionData(host *metal3v1alpha1.BareMetalHost) {
+// 	host.Status.HardwareDetails = nil
+// }
 
 func (r *BareMetalHostReconciler) actionDeprovisioning(prov provisioner.Provisioner, info *reconcileInfo) actionResult {
 	if info.host.Status.Provisioning.Image.URL != "" {

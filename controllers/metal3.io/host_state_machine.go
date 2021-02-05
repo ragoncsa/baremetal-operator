@@ -226,6 +226,17 @@ func (hsm *hostStateMachine) checkInitiateDelete() bool {
 	return true
 }
 
+// // HasInspectAnnotation checks for existence of inspect annotation and returns true if it exist+
+// func HasInspectAnnotation(host *metal3v1alpha1.BareMetalHost) bool {
+// 	annotations := host.GetAnnotations()
+// 	if annotations != nil {
+// 		if _, ok := annotations[inspectAnnotation]; ok {
+// 			return true
+// 		}
+// 	}
+// 	return false
+// }
+
 func (hsm *hostStateMachine) ensureRegistered(info *reconcileInfo) (result actionResult) {
 	if !hsm.haveCreds {
 		// If we are in the process of deletion (which may start with
@@ -348,6 +359,12 @@ func (hsm *hostStateMachine) handleReady(info *reconcileInfo) actionResult {
 	if hsm.Host.Spec.ExternallyProvisioned {
 		hsm.NextState = metal3v1alpha1.StateExternallyProvisioned
 		clearHostProvisioningSettings(info.host)
+		return actionComplete{}
+	}
+
+	if hasInspectAnnotation(hsm.Host) {
+		hsm.NextState = metal3v1alpha1.StateInspecting
+		// clearHostInspectionData(info.host)
 		return actionComplete{}
 	}
 

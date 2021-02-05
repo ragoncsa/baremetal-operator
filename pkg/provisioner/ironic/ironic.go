@@ -696,7 +696,7 @@ func (p *ironicProvisioner) InspectHardware(force bool) (result provisioner.Resu
 		result, err = transientError(errors.Wrap(err, "failed to extract hardware inspection status"))
 		return
 	}
-	if !status.Finished {
+	if !status.Finished || (nodes.ProvisionState(ironicNode.ProvisionState) == nodes.Inspecting || nodes.ProvisionState(ironicNode.ProvisionState) == nodes.InspectWait) {
 		p.log.Info("inspection in progress", "started_at", status.StartedAt)
 		result, err = operationContinuing(introspectionRequeueDelay)
 		return
