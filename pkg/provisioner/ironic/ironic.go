@@ -562,7 +562,6 @@ func (p *ironicProvisioner) ValidateManagementAccess(credentialsChanged, force b
 	// if err != nil {
 	// 	return result, errors.Wrap(err, "failed to get provisioning state in ironic")
 	// }
-
 	p.log.Info("current provision state",
 		"lastError", ironicNode.LastError,
 		"current", ironicNode.ProvisionState,
@@ -969,6 +968,22 @@ func (p *ironicProvisioner) getImageUpdateOptsForNode(ironicNode *nodes.Node, im
 			Path:  "/instance_info/capabilities",
 			Value: map[string]string{},
 		})
+	}
+
+	if (p.host.Spec.AutomatedCleaningMode == "disabled" && *ironicNode.AutomatedClean != false) || (p.host.Spec.AutomatedCleaningMode == "enabled" && *ironicNode.AutomatedClean == false) {
+		p.log.Info("setting automated cleaning mode to",
+			"ID", ironicNode.UUID,
+			"mode", p.host.Spec.AutomatedCleaningMode)
+		value := p.host.Spec.AutomatedCleaningMode != metal3v1alpha1.CleaningModeDisabled
+		updates = append(
+			updates,
+			nodes.UpdateOperation{
+				Op:    nodes.ReplaceOp,
+				Path:  "/automated_clean",
+				Value: value,
+			},
+		)
+
 	}
 
 	// Set live-iso format options
